@@ -4,13 +4,19 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import React, { Component } from 'react'
 import DocumentTitle from 'react-document-title'
-import * as itemActions from '../actions/userActions'
+import * as userActions from '../actions/userActions'
 
 export default class Login extends Component {
 
   formElement = null;
 
-  handleSubmit(e) {
+  componentDidUpdate() {
+    if (this.props.user.username && this.props.token) {
+      window.location.hash = '#/'
+    }
+  }
+
+  login(e) {
     e.preventDefault();
 
     let user = jQuery(this.formElement).serializeObject();
@@ -25,7 +31,7 @@ export default class Login extends Component {
           <div className="ui basic segment">
             <div className="ui two column centered grid">
               <div className="column">
-                <form className="ui large form" ref={c => {this.formElement = c}} onSubmit={this.handleSubmit.bind(this)}>
+                <form className="ui large form" ref={c => {this.formElement = c}} onSubmit={this.login.bind(this)}>
                   <div className="field">
                     <div className="ui left icon input">
                       <i className="user icon"></i>
@@ -40,6 +46,14 @@ export default class Login extends Component {
                   </div>
                   <button className="ui fluid large teal submit button">Login</button>
                 </form>
+                {this.props.loginFailed ?
+                  <div className="ui negative message">
+                    <div className="header">
+                      Login failed!
+                    </div>
+                    <p>{this.props.loginErrorMessage}</p>
+                  </div>
+                : null}
               </div>
             </div>
           </div>
@@ -52,6 +66,7 @@ export default class Login extends Component {
 function mapStateToProps(state) {
   return {
     user: state.getIn(['userStates', 'user']).toObject(),
+    token: state.getIn(['userStates', 'token']),
     loginFailed: state.getIn(['userStates', 'loginFailed']),
     loginErrorMessage: state.getIn(['userStates', 'loginErrorMessage']),
     isLoading: state.getIn(['userStates', 'isLoading'])
@@ -60,7 +75,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    actions: bindActionCreators(itemActions, dispatch)
+    actions: bindActionCreators(userActions, dispatch)
   }
 }
 

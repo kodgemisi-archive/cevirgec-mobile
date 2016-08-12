@@ -5,11 +5,20 @@ import { connect } from 'react-redux'
 import React, { Component } from 'react'
 import { Link } from 'react-router'
 import DocumentTitle from 'react-document-title'
-import * as itemActions from '../actions/userActions'
-
+import * as userActions from '../actions/userActions'
 import '../styles/dashboard.scss';
 
 export default class Dashboard extends Component {
+
+  componentDidUpdate() {
+    if (!this.props.username && !this.props.token) {
+      window.location.hash = '#/login';
+    }
+  }
+
+  logout() {
+    this.props.actions.logout(this.props.token);
+  }
 
   render() {
     return (
@@ -18,6 +27,9 @@ export default class Dashboard extends Component {
           <div className="ui basic segment">
             <div className="ui two column centered grid">
               <div className="column">
+                <button className="ui teal button right floated" style={{marginBottom: 7}} onClick={this.logout.bind(this)}>
+                  Logout
+                </button>
                 <div className="ui fluid card">
                   <Link to="/study" className="content">
                     <i className="student icon big"></i>
@@ -46,4 +58,19 @@ export default class Dashboard extends Component {
   }
 }
 
-export default Dashboard
+function mapStateToProps(state) {
+  return {
+    token: state.getIn(['userStates', 'token'])
+  }
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    actions: bindActionCreators(userActions, dispatch)
+  }
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Dashboard)
