@@ -10,8 +10,12 @@ import '../styles/dashboard.scss';
 
 export default class Dashboard extends Component {
 
+  userLoggedIn() {
+    return localStorage.getItem("user") && localStorage.getItem("token");
+  }
+
   componentDidUpdate() {
-    if (!this.props.username && !this.props.token) {
+    if (!this.userLoggedIn()) {
       window.location.hash = '#/login';
     }
   }

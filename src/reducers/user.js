@@ -28,8 +28,9 @@ export default function userStates(state = new Immutable.Map(initialState), acti
                   .set("isLoading", false);
 
     case types.USER_LOGIN_FAILED:
+      let errorMessage = action.error ? action.error : defaultLoginErrorMessage;
       return state.set("loginFailed", true)
-                  .set("loginErrorMessage", action.error)
+                  .set("loginErrorMessage", errorMessage)
                   .set("isLoading", false);
 
     case types.USER_LOGOUT:

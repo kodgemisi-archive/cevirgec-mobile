@@ -10,8 +10,12 @@ export default class Login extends Component {
 
   formElement = null;
 
+  userLoggedIn() {
+    return localStorage.getItem("user") && localStorage.getItem("token");
+  }
+
   componentDidUpdate() {
-    if (this.props.user.username && this.props.token) {
+    if (this.userLoggedIn()) {
       window.location.hash = '#/'
     }
   }

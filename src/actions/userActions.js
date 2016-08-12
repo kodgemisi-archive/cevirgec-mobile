@@ -1,4 +1,5 @@
 import * as types from '../constants/ActionTypes';
+import * as ApiUrls from '../constants/ApiUrls';
 import fetch from 'isomorphic-fetch';
 
 function loginAttempt() {
@@ -41,7 +42,7 @@ export function login(userData) {
   return dispatch => {
     dispatch(loginAttempt());
 
-    fetch('http://192.168.1.43:8080/shop/api/login', {
+    fetch(ApiUrls.LOGIN, {
       method: 'post',
       headers: {
         'Authorization': 'Basic ' + btoa(userData.username + ':' + userData.password)
@@ -51,13 +52,18 @@ export function login(userData) {
       if (response.status >= 200 && response.status < 300) {
         return response.json();
       }
+
+      if (response.status == 401) {
+        dispatch(loginError('Invalid username or password.'));
+      }
     })
     .then(userAndToken => {
-      dispatch(loginSuccess(userAndToken));
+      if (userAndToken) {
+        dispatch(loginSuccess(userAndToken));
+      }
     })
     .catch(error => {
-      console.error(error);
-      dispatch(loginError('Invalid username or password.'));
+      dispatch(loginError());
     })
   }
 }
@@ -66,7 +72,7 @@ export function logout(token) {
   return dispatch => {
     dispatch(logoutAttempt());
 
-    fetch('http://192.168.1.43:8080/shop/api/logout', {
+    fetch(ApiUrls.LOGOUT, {
       method: 'get',
       headers: {
         'x-auth-token': token
