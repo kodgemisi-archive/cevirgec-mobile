@@ -64,6 +64,7 @@ export default class Dashboard extends Component {
 
 function mapStateToProps(state) {
   return {
+    user: state.getIn(['userStates', 'user']).toObject(),
     token: state.getIn(['userStates', 'token'])
   }
 }

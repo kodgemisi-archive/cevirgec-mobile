@@ -11,7 +11,7 @@ export default class Login extends Component {
   formElement = null;
 
   userLoggedIn() {
-    return localStorage.getItem("user") && localStorage.getItem("token");
+    return this.props.user && this.props.token
   }
 
   componentDidUpdate() {
